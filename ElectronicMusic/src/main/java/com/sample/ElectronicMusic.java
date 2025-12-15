@@ -127,6 +127,7 @@ public class ElectronicMusic {
                 if (!finished) {
                     for (String optionText : options) {
                         JButton btn = new JButton(optionText);
+                        btn.setFocusPainted(false);
                         btn.addActionListener(e -> handleUserChoice(optionText));
                         optionsPanel.add(btn);
                     }
