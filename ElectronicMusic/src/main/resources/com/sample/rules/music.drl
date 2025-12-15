@@ -7,17 +7,17 @@ import java.util.List
 
 // Klasa przechowuj¹ca stan GUI. Java tylko j¹ odczytuje.
 declare GuiState
-    message : String            // Treœæ pytania lub rekomendacji
-    options : List              // Lista dostêpnych odpowiedzi (Stringi)
-    recommendation : String     // Jeœli nie null, to wyœwietlamy jako wynik
+    message : String            
+    options : List              
+    recommendation : String     
     imageFile : String
-    finished : boolean          // Czy koniec wnioskowania
+    finished : boolean          
 end
 
 // Klasa reprezentuj¹ca odpowiedŸ u¿ytkownika
 declare UserAnswer
-    questionTopic : String      // Czego dotyczy³o pytanie (np. "genre", "sub_rap")
-    selectedOption : String     // Co wybra³ u¿ytkownik
+    questionTopic : String      
+    selectedOption : String     
 end
 
 // Klasa reprezentuj¹ca znaleziony album (Fakt koñcowy)
@@ -32,7 +32,7 @@ end
 // 1. INICJALIZACJA: Startujemy system
 rule "Init"
     when
-        not GuiState() // Jeœli nie ma jeszcze stanu GUI
+        not GuiState() 
     then
         GuiState state = new GuiState();
         state.setMessage("What type of music do you like?");
@@ -48,33 +48,27 @@ rule "Init"
         insert(state);
 end
 
-// 2. ŒCIE¯KA ROCKOWA (Radiohead - OK Computer)
 rule "Radiohead - OK Computer"
     when
-        // Je¿eli u¿ytkownik wybra³ Rock
         $ans : UserAnswer(questionTopic == "root", selectedOption == "I like rock music")
         $gui : GuiState()
     then
-        // Modyfikujemy GUI - pokazujemy pierwsz¹ propozycjê i pytamy dalej
         $gui.setMessage("Found classic choice: Radiohead - OK Computer. Is this what you want?");
-        $gui.setRecommendation("Radiohead - OK Computer"); // To siê wyœwietli jako wstêpny wynik
+        $gui.setRecommendation("Radiohead - OK Computer"); 
         $gui.setImageFile("OK_Computer.png");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
-        opts.add("Cool, but that's basically just rock music!"); // Chcê czegoœ wiêcej (Kid A)
+        opts.add("Cool, but that's basically just rock music!"); 
         $gui.setOptions(opts);
         $gui.setFinished(false);
-        // Wa¿ne: oznaczamy, ¿e to pytanie dotyczy œcie¿ki rockowej
-        // Usuwamy star¹ odpowiedŸ, ¿eby nie odpala³a regu³ w kó³ko (dobre praktyki)
+
         retract($ans); 
         update($gui);
 end
 
-// 2.1 ŒCIE¯KA ROCKOWA -> EKSPERYMENTALNA (Kid A)
 rule "Radiohead - Kid A"
     when
-        // Kontekst: Jesteœmy w œcie¿ce rock, user chce czegoœ wiêcej
         $ans : UserAnswer(selectedOption == "Cool, but that's basically just rock music!")
         $gui : GuiState()
     then
@@ -84,7 +78,6 @@ rule "Radiohead - Kid A"
         album.setDescription("This is the bridge to Electronic Music!");
         insert(album);
         
-        // Aktualizuj GUI na koniec
         $gui.setMessage("Since you want more than rock, try this masterpiece:");
         $gui.setRecommendation("Radiohead - Kid A");
         $gui.setImageFile("Kid_A.png");
@@ -1095,7 +1088,6 @@ rule "Justice - Cross"
         update($gui);
 end
 
-// 3. ŒCIE¯KA RAPOWA (Kanye West)
 rule "Process Rap Choice"
     when
         $ans : UserAnswer(questionTopic == "root", selectedOption == "I like rap music")
@@ -1115,7 +1107,6 @@ rule "Process Rap Choice"
         update($gui);
 end
 
-// 3.1 RAP -> NUJABES
 rule "Nujabes - Metaphorical Music"
     when
     	$gui : GuiState(recommendation != "Nujabes - Metaphorical Music")
@@ -1140,7 +1131,6 @@ rule "Nujabes - Metaphorical Music"
         update($gui);
 end
 
-// 3.2 RAP -> GIRL TALK
 rule "Girl Talk - Feed the Animals"
     when
         $ans : UserAnswer(selectedOption == "Come on give me REAL rap music")
@@ -1211,7 +1201,6 @@ rule "DJ Shadow - Endtroducing....."
         update($gui);
 end
 
-// Opcjonalnie: Obs³uga przycisku "Cool, thanks!" (Koniec na OK Computer)
 rule "Finish Early"
     when
         $ans : UserAnswer(selectedOption == "Cool, thanks!")
