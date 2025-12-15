@@ -1,0 +1,1226 @@
+package com.sample.rules
+
+import java.util.ArrayList
+import java.util.List
+
+// --- DEKLARACJE TYPÓW (WYMAGANIE: Klasy przedmiotowe w DRL) ---
+
+// Klasa przechowuj¹ca stan GUI. Java tylko j¹ odczytuje.
+declare GuiState
+    message : String            // Treœæ pytania lub rekomendacji
+    options : List              // Lista dostêpnych odpowiedzi (Stringi)
+    recommendation : String     // Jeœli nie null, to wyœwietlamy jako wynik
+    imageFile : String
+    finished : boolean          // Czy koniec wnioskowania
+end
+
+// Klasa reprezentuj¹ca odpowiedŸ u¿ytkownika
+declare UserAnswer
+    questionTopic : String      // Czego dotyczy³o pytanie (np. "genre", "sub_rap")
+    selectedOption : String     // Co wybra³ u¿ytkownik
+end
+
+// Klasa reprezentuj¹ca znaleziony album (Fakt koñcowy)
+declare AlbumRecommendation
+    artist : String
+    albumName : String
+    description : String
+end
+
+// --- REGU£Y WNIOSKOWANIA ---
+
+// 1. INICJALIZACJA: Startujemy system
+rule "Init"
+    when
+        not GuiState() // Jeœli nie ma jeszcze stanu GUI
+    then
+        GuiState state = new GuiState();
+        state.setMessage("What type of music do you like?");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("I like rock music");
+        opts.add("I like rap music");
+        state.setOptions(opts);
+        
+        state.setRecommendation(null);
+        state.setFinished(false);
+        
+        insert(state);
+end
+
+// 2. ŒCIE¯KA ROCKOWA (Radiohead - OK Computer)
+rule "Radiohead - OK Computer"
+    when
+        // Je¿eli u¿ytkownik wybra³ Rock
+        $ans : UserAnswer(questionTopic == "root", selectedOption == "I like rock music")
+        $gui : GuiState()
+    then
+        // Modyfikujemy GUI - pokazujemy pierwsz¹ propozycjê i pytamy dalej
+        $gui.setMessage("Found classic choice: Radiohead - OK Computer. Is this what you want?");
+        $gui.setRecommendation("Radiohead - OK Computer"); // To siê wyœwietli jako wstêpny wynik
+        $gui.setImageFile("OK_Computer.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Cool, but that's basically just rock music!"); // Chcê czegoœ wiêcej (Kid A)
+        $gui.setOptions(opts);
+        $gui.setFinished(false);
+        // Wa¿ne: oznaczamy, ¿e to pytanie dotyczy œcie¿ki rockowej
+        // Usuwamy star¹ odpowiedŸ, ¿eby nie odpala³a regu³ w kó³ko (dobre praktyki)
+        retract($ans); 
+        update($gui);
+end
+
+// 2.1 ŒCIE¯KA ROCKOWA -> EKSPERYMENTALNA (Kid A)
+rule "Radiohead - Kid A"
+    when
+        // Kontekst: Jesteœmy w œcie¿ce rock, user chce czegoœ wiêcej
+        $ans : UserAnswer(selectedOption == "Cool, but that's basically just rock music!")
+        $gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Radiohead");
+        album.setAlbumName("Kid A");
+        album.setDescription("This is the bridge to Electronic Music!");
+        insert(album);
+        
+        // Aktualizuj GUI na koniec
+        $gui.setMessage("Since you want more than rock, try this masterpiece:");
+        $gui.setRecommendation("Radiohead - Kid A");
+        $gui.setImageFile("Kid_A.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Even this is too much electronic for me"); // Godspeed You! 
+        opts.add("I actually liked the drums and bleeps they had going on. More of that"); //Aphex Twin || Autechre
+        opts.add("Cool, But I'm not quite ready to lose the guitars quite yet."); // Darkside
+        opts.add("Weird, but good! Maybe more electronic, but I still want vocals."); // The Knife
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Godspeed You! Black Emperor - Lift Your Skinny Fists Like Antennas to Heaven"
+	when 
+		$ans : UserAnswer(selectedOption == "Even this is too much electronic for me")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Godspeed You! Black Emperor");
+        album.setAlbumName("Lift Your Skinny Fists Like Antennas to Heaven");
+        insert(album);
+        
+        $gui.setMessage("Less electronic for you:");
+        $gui.setRecommendation("Godspeed You! Black Emperor - Lift Your Skinny Fists Like Antennas to Heaven");
+        $gui.setImageFile("Lift_Your_Skinny_Fists_Like_Antennas_to_Heaven.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I love those buildups! I could try some electronic music that does that");  
+        opts.add("I think I could handle that, but way more minimal"); 
+        opts.add("I like the post-rock song structure and scale"); 
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Radiohead -> IDM Choice (Autechre vs Aphex)"
+    when 
+        $ans : UserAnswer(selectedOption == "I actually liked the drums and bleeps they had going on. More of that")
+        $gui : GuiState()
+    then 
+        $gui.setMessage("Okay, digging deeper into IDM. Do you prefer warm analog textures or complex rhythmic structures?");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Aphex Twin - Selected Ambient Works (Warm and Ambient)");
+        opts.add("Autechre - Amber (Complex and Abstract)");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Aphex Twin - Selected Ambient Works"
+    when 
+        $ans : UserAnswer(selectedOption == "Aphex Twin - Selected Ambient Works (Warm and Ambient)" || selectedOption == "I want something more electric feeling" || selectedOption == "I can deal with the weird parts. I think I'm ready for the classics")
+        $gui : GuiState()
+    then 
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Aphex Twin");
+        album.setAlbumName("Selected Ambient Works");
+        album.setDescription("A legendary ambient techno album.");
+        insert(album);
+        
+        $gui.setMessage("Here is the holy grail of ambient techno:");
+        $gui.setRecommendation("Aphex Twin - Selected Ambient Works 85-92");
+        $gui.setImageFile("Selected_Ambient_Works.png");
+        
+        ArrayList opts = new ArrayList();;
+        opts.add("That sounds dated. Something more recent?");
+        opts.add("Cool, thanks!"); // Koniec
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Autechre - Amber"
+    when 
+        $ans : UserAnswer(selectedOption == "Autechre - Amber (Complex and Abstract)" || selectedOption == "I like the glitchy drums" || selectedOption == "More drums.")
+        $gui : GuiState()
+    then 
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Autechre");
+        album.setAlbumName("Amber");
+        album.setDescription("Glitchy, atmospheric, and melancholic.");
+        insert(album);
+        
+        $gui.setMessage("Dive into the abstract world of:");
+        $gui.setRecommendation("Autechre - Amber");
+        $gui.setImageFile("Amber.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, I guess electronic music isn't just talentless button pushing. More like this");
+        opts.add("Cool, thanks!"); // Koniec
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Darkside - Psychic"
+	when 
+		$ans : UserAnswer(selectedOption == "Cool, But I'm not quite ready to lose the guitars quite yet." || selectedOption == "Too weird!")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Darkside");
+        album.setAlbumName("Psychic");
+        insert(album);
+        
+        $gui.setMessage("You won't lose the guitars:");
+        $gui.setRecommendation("Darkside - Psychic");
+        $gui.setImageFile("Psychic.jpeg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I like this . We can lose the guitars and stuff now. I'm ready.");
+        opts.add("Where can I go from here?"); 
+        opts.add("More of the same, but I think I'm ready for electronic music now."); 
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "The Knife - Silent Shout"
+	when 
+		$ans : UserAnswer(selectedOption == "Weird, but good! Maybe more electronic, but I still want vocals.")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("The Knife");
+        album.setAlbumName("Silent Shout");
+        insert(album);
+        
+        $gui.setMessage("Here you are, albume with vocals:");
+        $gui.setRecommendation("The Knife - Silent Shout");
+        $gui.setImageFile("Silent_Shout.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Too weird!"); // Darkside - Psychic
+        opts.add("Take out the vocals. Focus it."); // Midnight Menu
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Fuck Buttons - Tarot Sport"
+	when 
+		$ans : UserAnswer(selectedOption == "I love those buildups! I could try some electronic music that does that")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Fuck Buttons");
+        album.setAlbumName("Tarot Sport");
+        insert(album);
+        
+        $gui.setMessage("Even more electronic music");
+        $gui.setRecommendation("Fuck Buttons - Tarot Sport");
+        $gui.setImageFile("Fuck_Buttons.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("More, quieter though."); 
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Neu! - Neu!"
+	when 
+		$ans : UserAnswer(selectedOption == "I think I could handle that, but way more minimal")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Neu!");
+        album.setAlbumName("Neu!");
+        insert(album);
+        
+        $gui.setMessage("More minimal music");
+        $gui.setRecommendation("Neu! - Neu!");
+        $gui.setImageFile("Neu!.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("More electronic influence");
+        opts.add("This, but electronic"); 
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Kashiwa Daisuke - Program Music"
+	when 
+		$ans : UserAnswer(selectedOption == "I like the post-rock song structure and scale")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Kashiwa Daisuke");
+        album.setAlbumName("Program Music");
+        insert(album);
+        
+        $gui.setMessage("Post rock song structure and scale");
+        $gui.setRecommendation("Kashiwa Daisuke - Program Music");
+        $gui.setImageFile("Program_Music.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I like the glitchy drums");
+        opts.add("I like the more ambient parts"); 
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Manuel Gottsching - e2 - e4"
+	when 
+		$ans : UserAnswer(selectedOption == "More electronic influence")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Manuel Gottsching");
+        album.setAlbumName("e2 - e4");
+        insert(album);
+        
+        $gui.setMessage("You want more electronic influence");
+        $gui.setRecommendation("Manuel Gottsching - e2 - e4");
+        $gui.setImageFile("e2_-_e4.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Fully electronic now.");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Tangerine Dream - Phaedra"
+	when 
+		$ans : UserAnswer(selectedOption == "Fully electronic now." || selectedOption == "I like the more ambient parts" || selectedOption == "More, quieter though.")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Tangerine Dream");
+        album.setAlbumName("Phaedra");
+        insert(album);
+        
+        $gui.setMessage("Fully electronic but ambient and more quieter though");
+        $gui.setRecommendation("Tangerine Dream - Phaedra");
+        $gui.setImageFile("Phaedra.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("More ambient stuff");
+        opts.add("This style of synths, but shorter songs and carelessly happy");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Mort Garrison - Plantasia"
+	when 
+		$ans : UserAnswer(selectedOption == "This style of synths, but shorter songs and carelessly happy")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Mort Garrison");
+        album.setAlbumName("Plantasia");
+        insert(album);
+        
+        $gui.setMessage("Shorter songs and happy style");
+        $gui.setRecommendation("Mort Garrison - Plantasia");
+        $gui.setImageFile("Plantasia.jpg");
+        
+        ArrayList opts = new ArrayList();
+        $gui.setFinished(true);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Klaus Schulze - Timewind"
+	when 
+		$ans : UserAnswer(selectedOption == "This, but electronic" || selectedOption == "I can't wrap my head around these drums, but I like the rest of it. No drums")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Klaus Schulze");
+        album.setAlbumName("Timewind");
+        insert(album);
+        
+        $gui.setMessage("Electronic? This is for you");
+        $gui.setRecommendation("Klaus Schulze - Timewind");
+        $gui.setImageFile("Timewind.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Let's get a steady beat of that.");
+        opts.add("More drums.");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Aphex Twin - Drukqs"
+	when 
+		$ans : UserAnswer(selectedOption == "Cool, I guess electronic music isn't just talentless button pushing. More like this")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Aphex Twin");
+        album.setAlbumName("Drukqs");
+        insert(album);
+        
+        $gui.setMessage("A chaotic masterpiece. It blends lightning-fast, complex drum programming with beautiful, melancholic piano interludes. Pure technical wizardry");
+        $gui.setRecommendation("Aphex Twin - Drukqs");
+        $gui.setImageFile("Drukqs.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I can't wrap my head around these drums, but I like the rest of it. No drums");
+        opts.add("Let's get a steady beat of that.");
+        opts.add("These complex beats are awesome. Can tehy get wilder?");
+        opts.add("That sounds dated. Something more recent?");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Nicolas Jaar - Space is Only Noise"
+	when 
+		$ans : UserAnswer(selectedOption == "More of the same, but I think I'm ready for electronic music now.")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Nicolas Jaar");
+        album.setAlbumName("Space is Only Noise");
+        insert(album);
+        
+        $gui.setMessage("A minimalist masterpiece. It slows down the tempo to explore organic textures, found sounds, and emotional space.");
+        $gui.setRecommendation("Nicolas Jaar - Space is Only Noise");
+        $gui.setImageFile("Space_is_Only_Noise.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("This is much to busy and melodius for my tastes.");
+        opts.add("More of a vocal focus.");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Villalobos - Alcachofa"
+	when 
+		$ans : UserAnswer(selectedOption == "This is much to busy and melodius for my tastes." || selectedOption == "Less melody, more subtle.")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Villalobos");
+        album.setAlbumName("Alcachofa");
+        insert(album);
+        
+        $gui.setMessage("A minimalist masterpiece. It slows down the tempo to explore organic textures, found sounds, and emotional space.");
+        $gui.setRecommendation("Villalobos - Alcachofa");
+        $gui.setImageFile("Alcachofa.jpeg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Go backwards for more traditional house music");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Bonobo - Black Sands"
+	when 
+		$gui : GuiState(recommendation != "Bonobo - Black Sands")
+		$ans : UserAnswer(selectedOption == "Where can I go from here?" || selectedOption == "I need more of these lush, organic sounds")
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Bonobo");
+        album.setAlbumName("Black Sands");
+        insert(album);
+        
+        $gui.setMessage("More organic sounds as you wish");
+        $gui.setRecommendation("Bonobo - Black Sands");
+        $gui.setImageFile("Black_Sands.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Chill it out");
+        opts.add("I need more of these lush, organic sounds");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Tycho - Dive"
+	when 
+		$ans : UserAnswer(selectedOption == "Chill it out")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Tycho");
+        album.setAlbumName("Dive");
+        insert(album);
+        
+        $gui.setMessage("You want to chill out");
+        $gui.setRecommendation("Tycho - Dive");
+        $gui.setImageFile("Dive.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Make it stranger. I want to listen to an educational film from eighties");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Boards of Canada - Music Has the Right to Children"
+	when 
+		$ans : UserAnswer(selectedOption == "Make it stranger. I want to listen to an educational film from eighties" || selectedOption == "I like those beats. What if they were a bit more spaced out?")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Boards of Canada");
+        album.setAlbumName("Music Has the Right to Children");
+        insert(album);
+        
+        $gui.setMessage("A psychedelic trip into faded childhood memories. Warm, warbling analog synths and dusty beats create a nostalgic atmosphere, like watching an old VHS tape.");
+        $gui.setRecommendation("Boards of Canada - Music Has the Right to Children");
+        $gui.setImageFile("Music_Has_the Right_to_Children.jpeg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I want something more electric feeling");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "TOKiMONSTA - Midnight Menu"
+	when 
+		$ans : UserAnswer(selectedOption == "Stranger! Wonkier!" || selectedOption == "Take out the vocals. Focus it." || selectedOption == "Happier, Lighter, Focus on the beats, not the vocals")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("TOKiMONSTA");
+        album.setAlbumName("Midnight Menu");
+        insert(album);
+        
+        $gui.setMessage("A nocturnal journey through instrumental hip-hop. It blends head-nodding beats with dusty samples and glitchy, dreamlike melodies.");
+        $gui.setRecommendation("TOKiMONSTA - Midnight Menu");
+        $gui.setImageFile("Midnight_Menu.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Keep the beats, but make it dark and operatic");
+        opts.add("Even stranger! Even wonkier!");
+        opts.add("I like those beats. What if they were a bit more spaced out?");
+        opts.add("I can deal with the weird parts. I think I'm ready for the classics");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Flying Lotus - Cosmogramma"
+	when 
+		$ans : UserAnswer(selectedOption == "That sounds dated. Something more recent?" || selectedOption == "Even stranger! Even wonkier!")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Flying Lotus");
+        album.setAlbumName("Cosmogramma");
+        insert(album);
+        
+        $gui.setMessage("More recent but even stranger and wonkier");
+        $gui.setRecommendation("Flying Lotus - Cosmogramma");
+        $gui.setImageFile("Cosmogramma.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I want this, but in a jungle");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Orb - The Orb's Adventures Beyond the Ultraworld"
+	when 
+		$ans : UserAnswer(selectedOption == "Let's get a steady beat of that.")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Orb");
+        album.setAlbumName("The Orb's Adventures Beyond the Ultraworld");
+        insert(album);
+        
+        $gui.setMessage("The defining statement of Ambient House. A sprawling, psychedelic double album that mixes dub basslines with sci-fi samples for a true space-travel experience");
+        $gui.setRecommendation("Orb - The Orb's Adventures Beyond the Ultraworld");
+        $gui.setImageFile("The_Orb's_Adventures_Beyond_the_Ultraworld.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Something a little bit less ambient maybe");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Global Communication - 76:14"
+	when 
+		$ans : UserAnswer(selectedOption == "More ambient stuff" || selectedOption == "I think I'm ready for some ambient now." || selectedOption == "I liked Halcyon + On + ON")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Global Communication");
+        album.setAlbumName("76:14");
+        insert(album);
+        
+        $gui.setMessage("More ambient stuff? Here you are");
+        $gui.setRecommendation("Global Communication - 76:14");
+        $gui.setImageFile("76_14.jpeg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Even more ambient");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Brian Eno - Ambient 2 : The Plateaux of Mirror"
+	when 
+		$ans : UserAnswer(selectedOption == "Even more ambient" || selectedOption == "Brian Eno - Ambient 2 : The Plateaux of Mirror")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Brian Eno");
+        album.setAlbumName("Ambient 2 : The Plateaux of Mirror");
+        insert(album);
+        
+        $gui.setMessage("A shimmering collaboration with Harold Budd. Sparse, acoustic piano notes float over subtle electronic textures, creating a fragile and ethereal atmosphere.");
+        $gui.setRecommendation("Brian Eno - Ambient 2 : The Plateaux of Mirror");
+        $gui.setImageFile("The_Plateaux_of_Mirror.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("This album is too busy for me.");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Brian Eno - Ambient 1 : Music for Airports"
+	when 
+		$ans : UserAnswer(selectedOption == "This album is too busy for me.")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Brian Eno");
+        album.setAlbumName("Ambient 1 : Music for Airports");
+        insert(album);
+        
+        $gui.setMessage("The album that defined the genre. Designed to diffuse anxiety, it uses slowly shifting tape loops of piano and vocal sighs to create a weightless, suspended atmosphere.");
+        $gui.setRecommendation("Brian Eno - Ambient 1 : Music for Airports");
+        $gui.setImageFile("Music_for_Airports.jpg");
+        
+        $gui.setFinished(true);
+        $gui.setOptions(new ArrayList());
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Brian Eno - Ambient 2 : The Plateaux of Mirror vs Jon Hopkins - Immunity"
+    when 
+        $ans : UserAnswer(selectedOption == "Mix the two.")
+        $gui : GuiState()
+    then 
+        $gui.setMessage("Choose with one you prefer");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Brian Eno - Ambient 2 : The Plateaux of Mirror");
+        opts.add("Jon Hopkins - Immunity");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Burial - Untrue"
+	when 
+		$ans : UserAnswer(selectedOption == "Darker. Sadder. The samples could be messed with a little more." || selectedOption == "Keep the beats, but make it dark and operatic")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Burial");
+        album.setAlbumName("Untrue");
+        insert(album);
+        
+        $gui.setMessage("More ambient stuff? Here you are");
+        $gui.setRecommendation("Burial - Untrue");
+        $gui.setImageFile("Untrue.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Happier, Lighter, Focus on the beats, not the vocals");
+        opts.add("Drop the samples, keep the nice beats and dark atmosphere");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Lone - Galaxy Garden"
+	when 
+		$ans : UserAnswer(selectedOption == "I want this, but in a jungle")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Lone");
+        album.setAlbumName("Galaxy Garden");
+        insert(album);
+        
+        $gui.setMessage("A neon-soaked explosion of rave nostalgia. It combines 90s breakbeats with tropical, psychedelic synths to create the sonic equivalent of a digital rainforest.");
+        $gui.setRecommendation("Lone - Galaxy Garden");
+        $gui.setImageFile("Galaxy_garden.jpeg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I loved the strange vocals that a few of the tracks had. And the drums");
+        opts.add("Rainforest music, but slightly less crazy");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "The Future Sound of London - Lifeforms"
+	when 
+		$ans : UserAnswer(selectedOption == "Rainforest music, but slightly less crazy" || selectedOption == "More!")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("The Future Sound of London");
+        album.setAlbumName("Lifeforms");
+        insert(album);
+        
+        $gui.setMessage("A sprawling, organic double album that feels like exploring an alien ecosystem. It moves beyond standard song structures to create a dense, humid, and cinematic soundscape.");
+        $gui.setRecommendation("The Future Sound of London - Lifeforms");
+        $gui.setImageFile("Lifeforms.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I think I'm ready for some ambient now.");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "The Future Sound of London - Accelerator"
+	when 
+		$ans : UserAnswer(selectedOption == "Something a little bit less ambient maybe")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("The Future Sound of London");
+        album.setAlbumName("Accelerator");
+        insert(album);
+        
+        $gui.setMessage("A high-octane blast of early 90s rave and techno. It features the iconic anthem 'Papua New Guinea' and combines raw industrial energy with ethereal melodies.");
+        $gui.setRecommendation("The Future Sound of London - Accelerator");
+        $gui.setImageFile("Accelerator.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("More!");
+        opts.add("I want to feel like I'm on drugs");
+        opts.add("Focus on fast, hard hitting drums!");
+        opts.add("Keep the rave vibe, but make it more emotional and melodic");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Orbital - Brown Album"
+    when
+    	$gui : GuiState(recommendation != "Orbital - Brown Album")
+        $ans : UserAnswer(selectedOption == "Keep the rave vibe, but make it more emotional and melodic" || selectedOption == "I don't ever want to stop dancing" || selectedOption == "Go backwards for more traditional house music")
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Orbital");
+        album.setAlbumName("Brown Album");
+        insert(album);
+        
+        $gui.setMessage("A masterpiece of 'Intelligent Techno' that bridges the gap between the club and the mind. It layers driving rhythms with lush, emotional melodies, featuring the timeless classic 'Halcyon + On'.");
+        $gui.setRecommendation("Orbital - Brown Album");
+        $gui.setImageFile("Brown_Album.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I don't ever want to stop dancing");
+        opts.add("Mix the two.");
+        opts.add("I liked Halcyon + On + ON");
+        opts.add("Less melody, more subtle.");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Jon Hopkins - Immunity"
+    when
+        $ans : UserAnswer(selectedOption == "Jon Hopkins - Immunity")
+    	$gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Jon Hopkins");
+        album.setAlbumName("Immunity");
+        insert(album);
+        
+        $gui.setMessage("A modern classic of organic techno. It constructs hypnotic, driving beats out of everyday found sounds and piano, creating a deeply emotional and immersive late-night journey.");
+        $gui.setRecommendation("Jon Hopkins - Immunity");
+        $gui.setImageFile("Immunity.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I liked the piano, but not the heavy parts");
+        opts.add("I liked the heavier bits, Collider for example");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Helios - Eingya"
+	when 
+		$ans : UserAnswer(selectedOption == "I liked the piano, but not the heavy parts")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Helios");
+        album.setAlbumName("Eingya");
+        insert(album);
+        
+        $gui.setMessage("Music with piano but without heavy parts");
+        $gui.setRecommendation("Helios - Eingya");
+        $gui.setImageFile("Eingya.jpeg");
+        
+        ArrayList opts = new ArrayList();
+        $gui.setFinished(true);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Massive Attack - Mezzanine"
+    when
+        $ans : UserAnswer(selectedOption == "Drop the samples, keep the nice beats and dark atmosphere")
+    	$gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Massive Attack");
+        album.setAlbumName("Mezzanine");
+        insert(album);
+        
+        $gui.setMessage("The definitive dark trip-hop masterpiece. It combines claustrophobic basslines, haunting vocals, and post-punk samples to create a brooding, cinematic, and intense atmosphere.");
+        $gui.setRecommendation("Massive Attack - Mezzanine");
+        $gui.setImageFile("Mezzanine.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I liked the feel of Brutal a little better");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "James Blake - James Blake"
+	when 
+		$ans : UserAnswer(selectedOption == "I liked the feel of Brutal a little better" || selectedOption == "More of a vocal focus." || selectedOption == "I like this . We can lose the guitars and stuff now. I'm ready.")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("James Blake");
+        album.setAlbumName("James Blake");
+        insert(album);
+        
+        $gui.setMessage("A game-changing blend of post-dubstep and soul. It combines bone-rattling sub-bass with fragile, intimate vocals and piano, using silence and minimalism to create deep emotional tension.");
+        $gui.setRecommendation("James Blake - James Blake");
+        $gui.setImageFile("James_Blake.jpg");
+        
+        ArrayList opts = new ArrayList();
+        $gui.setFinished(true);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Machinedrum - Room(s)"
+    when
+        $ans : UserAnswer(selectedOption == "I loved the strange vocals that a few of the tracks had. And the drums" || selectedOption == "These complex beats are awesome. Can tehy get wilder?")
+    	$gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Machinedrum");
+        album.setAlbumName("Room(s)");
+        insert(album);
+        
+        $gui.setMessage("A high-speed collision of Chicago Footwork and Jungle. It features frantic, syncopated rhythms, chopped vocal samples, and deep bass, capturing the breathless energy of a city at night.");
+        $gui.setRecommendation("Machinedrum - Room(s)");
+        $gui.setImageFile("Room(s).jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Those drums. 10 times louder. 10 times crazier");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Venetian Snares - Rossz Csillag Alatt Született"
+    when
+        $ans : UserAnswer(selectedOption == "Those drums. 10 times louder. 10 times crazier")
+    	$gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Venetian Snares");
+        album.setAlbumName("Rossz Csillag Alatt Született");
+        insert(album);
+        
+        $gui.setMessage("The absolute peak of Breakcore. It fuses sorrowful Hungarian classical strings with violent, rapid-fire drill'n'bass beats to create a tragic, yet aggressive masterpiece.");
+        $gui.setRecommendation("Venetian Snares - Rossz Csillag Alatt Született");
+        $gui.setImageFile("Rossz_Csillag_Alatt_Született.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Calm down those drums. I like the orchestral samples though");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Kashiwa Daisuke - Program Music end"
+	when 
+		$ans : UserAnswer(selectedOption == "Calm down those drums. I like the orchestral samples though")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Kashiwa Daisuke");
+        album.setAlbumName("Program Music");
+        insert(album);
+        
+        $gui.setMessage("A cinematic masterpiece of 'Glitch Classical'. It blends weeping violins and delicate piano with razor-sharp digital editing, creating massive, emotional crescendos that tell a story without words.");
+        $gui.setRecommendation("Kashiwa Daisuke - Program Music");
+        $gui.setImageFile("Program_Music.jpg");
+        
+        ArrayList opts = new ArrayList();
+        $gui.setFinished(true);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Goldie - Timeless"
+    when
+        $ans : UserAnswer(selectedOption == "Focus on fast, hard hitting drums!")
+    	$gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Goldie");
+        album.setAlbumName("Timeless");
+        insert(album);
+        
+        $gui.setMessage("The album that brought Drum & Bass to the masses without losing its soul. It combines complex, rapid-fire breakbeats with symphonic strings and haunting vocals, creating a truly cinematic urban soundscape.");
+        $gui.setRecommendation("Goldie - Timeless");
+        $gui.setImageFile("Timeless.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("This, but I want to feel like I'm exploring a frozen wasteland");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Shpongle - Are You Shpongled?"
+    when
+        $ans : UserAnswer(selectedOption == "I want to feel like I'm on drugs" || selectedOption == "Fun stuff, but could it get a little more... Tribal?")
+    	$gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Shpongle");
+        album.setAlbumName("Are You Shpongled?");
+        insert(album);
+        
+        $gui.setMessage("The definitive Psybient experience. It fuses organic world music instrumentation, flutes, and tribal vocals with liquid, shapeshifting electronic textures to create a hallucinogenic sonic journey.");
+        $gui.setRecommendation("Shpongle - Are You Shpongled?");
+        $gui.setImageFile("Are_You_Shpongled.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("This, but I want to feel like I'm exploring a frozen wasteland");
+        opts.add("Focus on fast, hard hitting drums!");
+        opts.add("I like this careless, fun music I can kind of dance to. Give me a big essential, diverse collection of it");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Sasha & John Digweed - Northern Exposure"
+	when 
+		$ans : UserAnswer(selectedOption == "This, but I want to feel like I'm exploring a frozen wasteland" || selectedOption == "I like this careless, fun music I can kind of dance to. Give me a big essential, diverse collection of it")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Sasha & John Digweed");
+        album.setAlbumName("Northern Exposure");
+        insert(album);
+        
+        $gui.setMessage("The gold standard of the DJ mix. A seamless, atmospheric journey through Progressive House and Trance that builds from ambient textures to euphoric peaks. Perfect for a long night drive.");
+        $gui.setRecommendation("Sasha & John Digweed - Northern Exposure");
+        $gui.setImageFile("Northern_Exposure.jpg");
+        
+        ArrayList opts = new ArrayList();
+        $gui.setFinished(true);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Daft Punk - Discovery"
+    when
+    	$gui : GuiState(recommendation != "Daft Punk - Discovery")
+        $ans : UserAnswer(selectedOption == "I liked the heavier bits, Collider for example" || selectedOption == "I don't ever want to stop dancing")
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Daft Punk");
+        album.setAlbumName("Discovery");
+        insert(album);
+        
+        $gui.setMessage("A colorful, euphoric masterpiece of French Touch. It filters 70s disco samples through futuristic production and robotic vocals to create pure, unadulterated pop joy.");
+        $gui.setRecommendation("Daft Punk - Discovery");
+        $gui.setImageFile("Discovery.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I don't ever want to stop dancing");
+        opts.add("Fun stuff, but could it get a little more... Tribal?");
+        opts.add("I like this careless, fun music I can kind of dance to. Give me a big essential, diverse collection of it");
+        opts.add("DIRTIER");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "Justice - Cross"
+	when 
+		$ans : UserAnswer(selectedOption == "DIRTIER")
+        $gui : GuiState()
+    then 	
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Justice");
+        album.setAlbumName("Cross");
+        insert(album);
+        
+        $gui.setMessage("A gritty, aggressive twist on French Touch. It blasts disco samples through heavy distortion and opera motifs, creating an electronic album with the swagger and energy of a rock band.");
+        $gui.setRecommendation("Justice - Cross");
+        $gui.setImageFile("Cross.jpg");
+        
+        ArrayList opts = new ArrayList();
+        $gui.setFinished(true);
+        
+        retract($ans);
+        update($gui);
+end
+
+// 3. ŒCIE¯KA RAPOWA (Kanye West)
+rule "Process Rap Choice"
+    when
+        $ans : UserAnswer(questionTopic == "root", selectedOption == "I like rap music")
+        $gui : GuiState()
+    then
+        $gui.setMessage("Starting point: Kanye West - 808s & Heartbreak. How should we proceed?");
+        $gui.setRecommendation("Kanye West - 808s & Heartbreak");
+        $gui.setImageFile("808s_&_Heartbreak.png");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Give me some nice hip hop beats"); // Nujabes
+        opts.add("Come on give me REAL rap music"); // Girl Talk
+        opts.add("Cool, thanks!");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+// 3.1 RAP -> NUJABES
+rule "Nujabes - Metaphorical Music"
+    when
+    	$gui : GuiState(recommendation != "Nujabes - Metaphorical Music")
+        $ans : UserAnswer(selectedOption == "Give me some nice hip hop beats" || selectedOption == "I'm liking these instrumental beats. More please" || selectedOption == "I need more of these lush, organic sounds")
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Nujabes");
+        album.setAlbumName("Metaphorical Music");
+        insert(album);
+        
+        $gui.setMessage("Chill beats and jazz vibes for you:");
+        $gui.setRecommendation("Nujabes - Metaphorical Music");
+        $gui.setImageFile("Metaphorical_Music.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Stranger! Wonkier!");
+        opts.add("I need more of these lush, organic sounds");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+// 3.2 RAP -> GIRL TALK
+rule "Girl Talk - Feed the Animals"
+    when
+        $ans : UserAnswer(selectedOption == "Come on give me REAL rap music")
+        $gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Girl Talk");
+        album.setAlbumName("Feed the Animals");
+        insert(album);
+        
+        $gui.setMessage("Ultimate mashup experience:");
+        $gui.setRecommendation("Girl Talk - Feed the Animals");
+        $gui.setImageFile("Feed_the_Animals.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("Whoa, sampling is cool, more like this!");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "The Avalanches - Since I Left You"
+    when
+        $ans : UserAnswer(selectedOption == "Whoa, sampling is cool, more like this!")
+        $gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("The Avalanches");
+        album.setAlbumName("Since I Left You");
+        insert(album);
+        
+        $gui.setMessage("A sunny, euphoric masterpiece constructed from over 3,500 vinyl samples. It flows seamlessly like a continuous summer dream, proving that sampling is an art form.");
+        $gui.setRecommendation("The Avalanches - Since I Left You");
+        $gui.setImageFile("Since_I_Left_You.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("More sampling with a hip-hop vibe to it.");
+        opts.add("Darker. Sadder. The samples could be messed with a little more.");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+rule "DJ Shadow - Endtroducing....."
+    when
+        $ans : UserAnswer(selectedOption == "More sampling with a hip-hop vibe to it.")
+        $gui : GuiState()
+    then
+        AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("DJ Shadow");
+        album.setAlbumName("Endtroducing.....");
+        insert(album);
+        
+        $gui.setMessage("A landmark in instrumental hip-hop, famous for being the first album created entirely from samples. It combines dusty drum breaks with moody, cinematic atmospheres.");
+        $gui.setRecommendation("DJ Shadow - Endtroducing.....");
+        $gui.setImageFile("Endtroducing.jpg");
+        
+        ArrayList opts = new ArrayList();
+        opts.add("Cool, thanks!"); // Koniec
+        opts.add("I'm liking these instrumental beats. More please");
+        $gui.setOptions(opts);
+        
+        retract($ans);
+        update($gui);
+end
+
+// Opcjonalnie: Obs³uga przycisku "Cool, thanks!" (Koniec na OK Computer)
+rule "Finish Early"
+    when
+        $ans : UserAnswer(selectedOption == "Cool, thanks!")
+        $gui : GuiState()
+    then
+        $gui.setMessage("Great! Enjoy your listening.");
+        $gui.setFinished(true);
+        $gui.setOptions(new ArrayList());
+        
+        retract($ans);
+        update($gui);
+end
