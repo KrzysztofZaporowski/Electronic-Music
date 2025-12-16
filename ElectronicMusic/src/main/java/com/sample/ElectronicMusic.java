@@ -128,6 +128,8 @@ public class ElectronicMusic {
                     for (String optionText : options) {
                         JButton btn = new JButton(optionText);
                         btn.setFocusPainted(false);
+                        btn.setBorderPainted(false);
+                        btn.setBackground(new Color(146, 198, 224));
                         btn.addActionListener(e -> handleUserChoice(optionText));
                         optionsPanel.add(btn);
                     }
