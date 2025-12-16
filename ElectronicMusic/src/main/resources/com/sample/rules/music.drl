@@ -55,7 +55,7 @@ rule "Radiohead - OK Computer"
     then
         $gui.setMessage("Found classic choice: Radiohead - OK Computer. Is this what you want?");
         $gui.setRecommendation("Radiohead - OK Computer"); 
-        $gui.setImageFile("OK_Computer.png");
+        $gui.setImageFile("IMG_RADIOHEAD_OK");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -80,7 +80,7 @@ rule "Radiohead - Kid A"
         
         $gui.setMessage("Since you want more than rock, try this masterpiece:");
         $gui.setRecommendation("Radiohead - Kid A");
-        $gui.setImageFile("Kid_A.png");
+        $gui.setImageFile("IMG_KID_A");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -106,7 +106,7 @@ rule "Godspeed You! Black Emperor - Lift Your Skinny Fists Like Antennas to Heav
         
         $gui.setMessage("Less electronic for you:");
         $gui.setRecommendation("Godspeed You! Black Emperor - Lift Your Skinny Fists Like Antennas to Heaven");
-        $gui.setImageFile("Lift_Your_Skinny_Fists_Like_Antennas_to_Heaven.png");
+        $gui.setImageFile("IMG_LIFT_YOUR_SKINNY_FISTS_LIKE_ANTENNAS_TO_HEAVEN");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -148,7 +148,7 @@ rule "Aphex Twin - Selected Ambient Works"
         
         $gui.setMessage("Here is the holy grail of ambient techno:");
         $gui.setRecommendation("Aphex Twin - Selected Ambient Works 85-92");
-        $gui.setImageFile("Selected_Ambient_Works.png");
+        $gui.setImageFile("IMG_SELECTED_AMBIENT_WORKS");
         
         ArrayList opts = new ArrayList();;
         opts.add("That sounds dated. Something more recent?");
@@ -172,7 +172,7 @@ rule "Autechre - Amber"
         
         $gui.setMessage("Dive into the abstract world of:");
         $gui.setRecommendation("Autechre - Amber");
-        $gui.setImageFile("Amber.png");
+        $gui.setImageFile("IMG_AMBER");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, I guess electronic music isn't just talentless button pushing. More like this");
@@ -195,7 +195,7 @@ rule "Darkside - Psychic"
         
         $gui.setMessage("You won't lose the guitars:");
         $gui.setRecommendation("Darkside - Psychic");
-        $gui.setImageFile("Psychic.jpeg");
+        $gui.setImageFile("IMG_PSYCHIC");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -220,7 +220,7 @@ rule "The Knife - Silent Shout"
         
         $gui.setMessage("Here you are, albume with vocals:");
         $gui.setRecommendation("The Knife - Silent Shout");
-        $gui.setImageFile("Silent_Shout.png");
+        $gui.setImageFile("IMG_SILENT_SHOUT");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -244,7 +244,7 @@ rule "Fuck Buttons - Tarot Sport"
         
         $gui.setMessage("Even more electronic music");
         $gui.setRecommendation("Fuck Buttons - Tarot Sport");
-        $gui.setImageFile("Fuck_Buttons.jpg");
+        $gui.setImageFile("IMG_FUCK_BUTTONS");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -267,7 +267,7 @@ rule "Neu! - Neu!"
         
         $gui.setMessage("More minimal music");
         $gui.setRecommendation("Neu! - Neu!");
-        $gui.setImageFile("Neu!.png");
+        $gui.setImageFile("IMG_NEU");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -291,7 +291,7 @@ rule "Kashiwa Daisuke - Program Music"
         
         $gui.setMessage("Post rock song structure and scale");
         $gui.setRecommendation("Kashiwa Daisuke - Program Music");
-        $gui.setImageFile("Program_Music.jpg");
+        $gui.setImageFile("IMG_PROGRAM_MUSIC");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -315,7 +315,7 @@ rule "Manuel Gottsching - e2 - e4"
         
         $gui.setMessage("You want more electronic influence");
         $gui.setRecommendation("Manuel Gottsching - e2 - e4");
-        $gui.setImageFile("e2_-_e4.jpg");
+        $gui.setImageFile("IMG_E2_E4");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -338,7 +338,7 @@ rule "Tangerine Dream - Phaedra"
         
         $gui.setMessage("Fully electronic but ambient and more quieter though");
         $gui.setRecommendation("Tangerine Dream - Phaedra");
-        $gui.setImageFile("Phaedra.jpg");
+        $gui.setImageFile("IMG_PHAEDRA");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -362,7 +362,7 @@ rule "Mort Garrison - Plantasia"
         
         $gui.setMessage("Shorter songs and happy style");
         $gui.setRecommendation("Mort Garrison - Plantasia");
-        $gui.setImageFile("Plantasia.jpg");
+        $gui.setImageFile("IMG_PLANTASIA");
         
         ArrayList opts = new ArrayList();
         $gui.setFinished(true);
@@ -383,7 +383,7 @@ rule "Klaus Schulze - Timewind"
         
         $gui.setMessage("Electronic? This is for you");
         $gui.setRecommendation("Klaus Schulze - Timewind");
-        $gui.setImageFile("Timewind.jpg");
+        $gui.setImageFile("IMG_TIMEWIND");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -407,7 +407,7 @@ rule "Aphex Twin - Drukqs"
         
         $gui.setMessage("A chaotic masterpiece. It blends lightning-fast, complex drum programming with beautiful, melancholic piano interludes. Pure technical wizardry");
         $gui.setRecommendation("Aphex Twin - Drukqs");
-        $gui.setImageFile("Drukqs.png");
+        $gui.setImageFile("IMG_DRUKQS");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -433,7 +433,7 @@ rule "Nicolas Jaar - Space is Only Noise"
         
         $gui.setMessage("A minimalist masterpiece. It slows down the tempo to explore organic textures, found sounds, and emotional space.");
         $gui.setRecommendation("Nicolas Jaar - Space is Only Noise");
-        $gui.setImageFile("Space_is_Only_Noise.png");
+        $gui.setImageFile("IMG_SPACE_IS_ONLY_NOISE");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -457,7 +457,7 @@ rule "Villalobos - Alcachofa"
         
         $gui.setMessage("A minimalist masterpiece. It slows down the tempo to explore organic textures, found sounds, and emotional space.");
         $gui.setRecommendation("Villalobos - Alcachofa");
-        $gui.setImageFile("Alcachofa.jpeg");
+        $gui.setImageFile("IMG_ALCACHOFA");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -480,7 +480,7 @@ rule "Bonobo - Black Sands"
         
         $gui.setMessage("More organic sounds as you wish");
         $gui.setRecommendation("Bonobo - Black Sands");
-        $gui.setImageFile("Black_Sands.png");
+        $gui.setImageFile("IMG_BLACK_SANDS");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -504,7 +504,7 @@ rule "Tycho - Dive"
         
         $gui.setMessage("You want to chill out");
         $gui.setRecommendation("Tycho - Dive");
-        $gui.setImageFile("Dive.jpg");
+        $gui.setImageFile("IMG_DIVE");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -527,7 +527,7 @@ rule "Boards of Canada - Music Has the Right to Children"
         
         $gui.setMessage("A psychedelic trip into faded childhood memories. Warm, warbling analog synths and dusty beats create a nostalgic atmosphere, like watching an old VHS tape.");
         $gui.setRecommendation("Boards of Canada - Music Has the Right to Children");
-        $gui.setImageFile("Music_Has_the Right_to_Children.jpeg");
+        $gui.setImageFile("IMG_MUSIC_HAS_THE_RIGHT_TO_CHILDREN");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -550,7 +550,7 @@ rule "TOKiMONSTA - Midnight Menu"
         
         $gui.setMessage("A nocturnal journey through instrumental hip-hop. It blends head-nodding beats with dusty samples and glitchy, dreamlike melodies.");
         $gui.setRecommendation("TOKiMONSTA - Midnight Menu");
-        $gui.setImageFile("Midnight_Menu.jpg");
+        $gui.setImageFile("IMG_MIDNIGHT_MENU");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -576,7 +576,7 @@ rule "Flying Lotus - Cosmogramma"
         
         $gui.setMessage("More recent but even stranger and wonkier");
         $gui.setRecommendation("Flying Lotus - Cosmogramma");
-        $gui.setImageFile("Cosmogramma.jpg");
+        $gui.setImageFile("IMG_COSMOGRAMMA");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -599,7 +599,7 @@ rule "Orb - The Orb's Adventures Beyond the Ultraworld"
         
         $gui.setMessage("The defining statement of Ambient House. A sprawling, psychedelic double album that mixes dub basslines with sci-fi samples for a true space-travel experience");
         $gui.setRecommendation("Orb - The Orb's Adventures Beyond the Ultraworld");
-        $gui.setImageFile("The_Orb's_Adventures_Beyond_the_Ultraworld.jpg");
+        $gui.setImageFile("IMG_THE_ORBS_ADVENTURES_BEYOND_THE_ULTRAWORLD");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -622,7 +622,7 @@ rule "Global Communication - 76:14"
         
         $gui.setMessage("More ambient stuff? Here you are");
         $gui.setRecommendation("Global Communication - 76:14");
-        $gui.setImageFile("76_14.jpeg");
+        $gui.setImageFile("IMG_76_14");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -645,7 +645,7 @@ rule "Brian Eno - Ambient 2 : The Plateaux of Mirror"
         
         $gui.setMessage("A shimmering collaboration with Harold Budd. Sparse, acoustic piano notes float over subtle electronic textures, creating a fragile and ethereal atmosphere.");
         $gui.setRecommendation("Brian Eno - Ambient 2 : The Plateaux of Mirror");
-        $gui.setImageFile("The_Plateaux_of_Mirror.jpg");
+        $gui.setImageFile("IMG_THE_PLATEAUX_OF_MIRROR");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -668,7 +668,7 @@ rule "Brian Eno - Ambient 1 : Music for Airports"
         
         $gui.setMessage("The album that defined the genre. Designed to diffuse anxiety, it uses slowly shifting tape loops of piano and vocal sighs to create a weightless, suspended atmosphere.");
         $gui.setRecommendation("Brian Eno - Ambient 1 : Music for Airports");
-        $gui.setImageFile("Music_for_Airports.jpg");
+        $gui.setImageFile("IMG_MUSIC_FOR_AIRPORTS");
         
         $gui.setFinished(true);
         $gui.setOptions(new ArrayList());
@@ -705,7 +705,7 @@ rule "Burial - Untrue"
         
         $gui.setMessage("More ambient stuff? Here you are");
         $gui.setRecommendation("Burial - Untrue");
-        $gui.setImageFile("Untrue.jpg");
+        $gui.setImageFile("IMG_UNTRUE");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -729,7 +729,7 @@ rule "Lone - Galaxy Garden"
         
         $gui.setMessage("A neon-soaked explosion of rave nostalgia. It combines 90s breakbeats with tropical, psychedelic synths to create the sonic equivalent of a digital rainforest.");
         $gui.setRecommendation("Lone - Galaxy Garden");
-        $gui.setImageFile("Galaxy_garden.jpeg");
+        $gui.setImageFile("IMG_GALAXY_GARDEN");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -753,7 +753,7 @@ rule "The Future Sound of London - Lifeforms"
         
         $gui.setMessage("A sprawling, organic double album that feels like exploring an alien ecosystem. It moves beyond standard song structures to create a dense, humid, and cinematic soundscape.");
         $gui.setRecommendation("The Future Sound of London - Lifeforms");
-        $gui.setImageFile("Lifeforms.jpg");
+        $gui.setImageFile("IMG_LIFEFORMS");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -776,7 +776,7 @@ rule "The Future Sound of London - Accelerator"
         
         $gui.setMessage("A high-octane blast of early 90s rave and techno. It features the iconic anthem 'Papua New Guinea' and combines raw industrial energy with ethereal melodies.");
         $gui.setRecommendation("The Future Sound of London - Accelerator");
-        $gui.setImageFile("Accelerator.jpg");
+        $gui.setImageFile("IMG_ACCELERATOR");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -802,7 +802,7 @@ rule "Orbital - Brown Album"
         
         $gui.setMessage("A masterpiece of 'Intelligent Techno' that bridges the gap between the club and the mind. It layers driving rhythms with lush, emotional melodies, featuring the timeless classic 'Halcyon + On'.");
         $gui.setRecommendation("Orbital - Brown Album");
-        $gui.setImageFile("Brown_Album.jpg");
+        $gui.setImageFile("IMG_BROWN_ALBUM");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -828,7 +828,7 @@ rule "Jon Hopkins - Immunity"
         
         $gui.setMessage("A modern classic of organic techno. It constructs hypnotic, driving beats out of everyday found sounds and piano, creating a deeply emotional and immersive late-night journey.");
         $gui.setRecommendation("Jon Hopkins - Immunity");
-        $gui.setImageFile("Immunity.jpg");
+        $gui.setImageFile("IMG_IMMUNITY");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -852,7 +852,7 @@ rule "Helios - Eingya"
         
         $gui.setMessage("Music with piano but without heavy parts");
         $gui.setRecommendation("Helios - Eingya");
-        $gui.setImageFile("Eingya.jpeg");
+        $gui.setImageFile("IMG_EINGYA");
         
         ArrayList opts = new ArrayList();
         $gui.setFinished(true);
@@ -873,7 +873,7 @@ rule "Massive Attack - Mezzanine"
         
         $gui.setMessage("The definitive dark trip-hop masterpiece. It combines claustrophobic basslines, haunting vocals, and post-punk samples to create a brooding, cinematic, and intense atmosphere.");
         $gui.setRecommendation("Massive Attack - Mezzanine");
-        $gui.setImageFile("Mezzanine.png");
+        $gui.setImageFile("IMG_MEZZANINE");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -896,7 +896,7 @@ rule "James Blake - James Blake"
         
         $gui.setMessage("A game-changing blend of post-dubstep and soul. It combines bone-rattling sub-bass with fragile, intimate vocals and piano, using silence and minimalism to create deep emotional tension.");
         $gui.setRecommendation("James Blake - James Blake");
-        $gui.setImageFile("James_Blake.jpg");
+        $gui.setImageFile("IMG_JAMES_BLAKE");
         
         ArrayList opts = new ArrayList();
         $gui.setFinished(true);
@@ -917,7 +917,7 @@ rule "Machinedrum - Room(s)"
         
         $gui.setMessage("A high-speed collision of Chicago Footwork and Jungle. It features frantic, syncopated rhythms, chopped vocal samples, and deep bass, capturing the breathless energy of a city at night.");
         $gui.setRecommendation("Machinedrum - Room(s)");
-        $gui.setImageFile("Room(s).jpg");
+        $gui.setImageFile("IMG_ROOMS");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -940,7 +940,7 @@ rule "Venetian Snares - Rossz Csillag Alatt Született"
         
         $gui.setMessage("The absolute peak of Breakcore. It fuses sorrowful Hungarian classical strings with violent, rapid-fire drill'n'bass beats to create a tragic, yet aggressive masterpiece.");
         $gui.setRecommendation("Venetian Snares - Rossz Csillag Alatt Született");
-        $gui.setImageFile("Rossz_Csillag_Alatt_Született.jpg");
+        $gui.setImageFile("IMG_ROSSZ_CSILLAG_ALATT_SZULETETT");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -963,7 +963,7 @@ rule "Kashiwa Daisuke - Program Music end"
         
         $gui.setMessage("A cinematic masterpiece of 'Glitch Classical'. It blends weeping violins and delicate piano with razor-sharp digital editing, creating massive, emotional crescendos that tell a story without words.");
         $gui.setRecommendation("Kashiwa Daisuke - Program Music");
-        $gui.setImageFile("Program_Music.jpg");
+        $gui.setImageFile("IMG_PROGRAM_MUSIC");
         
         ArrayList opts = new ArrayList();
         $gui.setFinished(true);
@@ -984,7 +984,7 @@ rule "Goldie - Timeless"
         
         $gui.setMessage("The album that brought Drum & Bass to the masses without losing its soul. It combines complex, rapid-fire breakbeats with symphonic strings and haunting vocals, creating a truly cinematic urban soundscape.");
         $gui.setRecommendation("Goldie - Timeless");
-        $gui.setImageFile("Timeless.jpg");
+        $gui.setImageFile("IMG_TIMELESS");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -1007,7 +1007,7 @@ rule "Shpongle - Are You Shpongled?"
         
         $gui.setMessage("The definitive Psybient experience. It fuses organic world music instrumentation, flutes, and tribal vocals with liquid, shapeshifting electronic textures to create a hallucinogenic sonic journey.");
         $gui.setRecommendation("Shpongle - Are You Shpongled?");
-        $gui.setImageFile("Are_You_Shpongled.jpg");
+        $gui.setImageFile("IMG_ARE_YOU_SHPONGLED");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -1032,7 +1032,7 @@ rule "Sasha & John Digweed - Northern Exposure"
         
         $gui.setMessage("The gold standard of the DJ mix. A seamless, atmospheric journey through Progressive House and Trance that builds from ambient textures to euphoric peaks. Perfect for a long night drive.");
         $gui.setRecommendation("Sasha & John Digweed - Northern Exposure");
-        $gui.setImageFile("Northern_Exposure.jpg");
+        $gui.setImageFile("IMG_NORTHERN_EXPOSURE");
         
         ArrayList opts = new ArrayList();
         $gui.setFinished(true);
@@ -1053,7 +1053,7 @@ rule "Daft Punk - Discovery"
         
         $gui.setMessage("A colorful, euphoric masterpiece of French Touch. It filters 70s disco samples through futuristic production and robotic vocals to create pure, unadulterated pop joy.");
         $gui.setRecommendation("Daft Punk - Discovery");
-        $gui.setImageFile("Discovery.png");
+        $gui.setImageFile("IMG_DISCOVERY");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -1079,7 +1079,7 @@ rule "Justice - Cross"
         
         $gui.setMessage("A gritty, aggressive twist on French Touch. It blasts disco samples through heavy distortion and opera motifs, creating an electronic album with the swagger and energy of a rock band.");
         $gui.setRecommendation("Justice - Cross");
-        $gui.setImageFile("Cross.jpg");
+        $gui.setImageFile("IMG_CROSS");
         
         ArrayList opts = new ArrayList();
         $gui.setFinished(true);
@@ -1095,7 +1095,7 @@ rule "Process Rap Choice"
     then
         $gui.setMessage("Starting point: Kanye West - 808s & Heartbreak. How should we proceed?");
         $gui.setRecommendation("Kanye West - 808s & Heartbreak");
-        $gui.setImageFile("808s_&_Heartbreak.png");
+        $gui.setImageFile("IMG_808S_HEARTBREAK");
         
         ArrayList opts = new ArrayList();
         opts.add("Give me some nice hip hop beats"); // Nujabes
@@ -1119,7 +1119,7 @@ rule "Nujabes - Metaphorical Music"
         
         $gui.setMessage("Chill beats and jazz vibes for you:");
         $gui.setRecommendation("Nujabes - Metaphorical Music");
-        $gui.setImageFile("Metaphorical_Music.jpg");
+        $gui.setImageFile("IMG_METAPHORICAL_MUSIC");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -1143,7 +1143,7 @@ rule "Girl Talk - Feed the Animals"
         
         $gui.setMessage("Ultimate mashup experience:");
         $gui.setRecommendation("Girl Talk - Feed the Animals");
-        $gui.setImageFile("Feed_the_Animals.jpg");
+        $gui.setImageFile("IMG_FEED_THE_ANIMALS");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -1166,7 +1166,7 @@ rule "The Avalanches - Since I Left You"
         
         $gui.setMessage("A sunny, euphoric masterpiece constructed from over 3,500 vinyl samples. It flows seamlessly like a continuous summer dream, proving that sampling is an art form.");
         $gui.setRecommendation("The Avalanches - Since I Left You");
-        $gui.setImageFile("Since_I_Left_You.jpg");
+        $gui.setImageFile("IMG_SINCE_I_LEFT_YOU");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
@@ -1190,7 +1190,7 @@ rule "DJ Shadow - Endtroducing....."
         
         $gui.setMessage("A landmark in instrumental hip-hop, famous for being the first album created entirely from samples. It combines dusty drum breaks with moody, cinematic atmospheres.");
         $gui.setRecommendation("DJ Shadow - Endtroducing.....");
-        $gui.setImageFile("Endtroducing.jpg");
+        $gui.setImageFile("IMG_ENDTRODUCING");
         
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec

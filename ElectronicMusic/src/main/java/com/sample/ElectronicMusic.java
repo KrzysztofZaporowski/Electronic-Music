@@ -6,9 +6,11 @@ import org.kie.api.runtime.KieSession;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 public class ElectronicMusic {
 
@@ -18,6 +20,7 @@ public class ElectronicMusic {
     private JLabel recommendationLabel;
     private JPanel optionsPanel;
     private JLabel imageLabel;
+    private Properties imageMap;
     
     private static final String DRL_PACKAGE = "com.sample.rules";
 
@@ -27,6 +30,14 @@ public class ElectronicMusic {
 
     public void init() {
         try {
+        	imageMap = new Properties();
+        	InputStream is = getClass().getResourceAsStream("/images.xml");
+        	if (is != null) {
+        		imageMap.loadFromXML(is);
+        	} else {
+        		System.out.println("Nie znaleziono pliku XML");
+        	}
+        	
             KieServices ks = KieServices.Factory.get();
             KieContainer kContainer = ks.getKieClasspathContainer();
             
@@ -95,7 +106,7 @@ public class ElectronicMusic {
                 List<String> options = (List<String>) getOptions.invoke(fact);
                 String recommendation = (String) getRecommendation.invoke(fact);
                 Boolean finished = (Boolean) isFinished.invoke(fact);
-                String imageFileName = (String) getImageFile.invoke(fact);
+                String imageFileKey = (String) getImageFile.invoke(fact);
 
                 questionLabel.setText(
                 		"<html><body style='text-align:center; padding: 10px;'>"
@@ -108,22 +119,32 @@ public class ElectronicMusic {
                 } else {
                     recommendationLabel.setText("");
                 }
-                if (imageFileName != null && !imageFileName.isEmpty()) {
-                    java.net.URL imgUrl = getClass().getResource("/covers/" + imageFileName);
+                
+                String realFileName = null;
+                if (imageFileKey != null && !imageFileKey.isEmpty()) {
+                    realFileName = imageMap.getProperty(imageFileKey);
                     
-                    if (imgUrl != null) {
-                        ImageIcon icon = new ImageIcon(imgUrl);
-                        Image img = icon.getImage().getScaledInstance(250, 250, Image.SCALE_SMOOTH);
-                        imageLabel.setIcon(new ImageIcon(img));
-                        imageLabel.setVisible(true);
-                    } else {
-                        System.out.println("B£¥D: Nie znaleziono pliku w resources: " + imageFileName);
-                        imageLabel.setIcon(null); 
+                    if (realFileName == null) {
+                    	System.out.println("Brak klucza: " + imageFileKey + " w iamges.xml");
+                    	realFileName = imageFileKey;
                     }
+                } 
+                if (realFileName != null && !realFileName.isEmpty()) {
+                	java.net.URL imageUrl = getClass().getResource("/covers/" + realFileName);
+                	
+                	if (imageUrl != null) {
+                		ImageIcon icon = new ImageIcon(imageUrl);
+                		Image img = icon.getImage().getScaledInstance(250, 250, Image.SCALE_SMOOTH);
+                		imageLabel.setIcon(new ImageIcon(img));
+                		imageLabel.setVisible(true);
+                	} else {
+                		System.out.println("Nie znaleziono pliku " + realFileName);
+                		imageLabel.setIcon(null);
+                	}
                 } else {
-                    imageLabel.setIcon(null); 
+                	imageLabel.setIcon(null);
                 }
-
+                
                 optionsPanel.removeAll();
                 
                 if (!finished) {
