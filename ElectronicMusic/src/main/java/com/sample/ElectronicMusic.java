@@ -49,7 +49,9 @@ public class ElectronicMusic {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(750, 650);
         frame.setLayout(new BorderLayout());
-
+        ImageIcon icon = new ImageIcon(getClass().getResource("/icons/electronic_music_icon.jpg"));
+        frame.setIconImage(icon.getImage());
+        
         JPanel topPanel = new JPanel(new GridLayout(2, 1));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         questionLabel = new JLabel(
