@@ -137,6 +137,9 @@ public class ElectronicMusic {
                     }
                 } else {
                     JButton exitBtn = new JButton("Close Application");
+                    exitBtn.setFocusPainted(false);
+                    exitBtn.setBorderPainted(false);
+                    exitBtn.setBackground(new Color(146, 198, 224));
                     exitBtn.addActionListener(e -> System.exit(0));
                     optionsPanel.add(exitBtn);
                 }
