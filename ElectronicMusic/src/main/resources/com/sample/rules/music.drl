@@ -635,7 +635,7 @@ end
 
 rule "Brian Eno - Ambient 2 : The Plateaux of Mirror"
 	when 
-		$ans : UserAnswer(selectedOption == "Even more ambient" || selectedOption == "Brian Eno - Ambient 2 : The Plateaux of Mirror")
+		$ans : UserAnswer(selectedOption == "Even more ambient")
         $gui : GuiState()
     then 	
     	AlbumRecommendation album = new AlbumRecommendation();
@@ -650,6 +650,7 @@ rule "Brian Eno - Ambient 2 : The Plateaux of Mirror"
         ArrayList opts = new ArrayList();
         opts.add("Cool, thanks!"); // Koniec
         opts.add("This album is too busy for me.");
+        opts.add("Mix the two.");
         $gui.setOptions(opts);
         
         retract($ans);
@@ -672,22 +673,6 @@ rule "Brian Eno - Ambient 1 : Music for Airports"
         
         $gui.setFinished(true);
         $gui.setOptions(new ArrayList());
-        
-        retract($ans);
-        update($gui);
-end
-
-rule "Brian Eno - Ambient 2 : The Plateaux of Mirror vs Jon Hopkins - Immunity"
-    when 
-        $ans : UserAnswer(selectedOption == "Mix the two.")
-        $gui : GuiState()
-    then 
-        $gui.setMessage("Choose with one you prefer");
-        
-        ArrayList opts = new ArrayList();
-        opts.add("Brian Eno - Ambient 2 : The Plateaux of Mirror");
-        opts.add("Jon Hopkins - Immunity");
-        $gui.setOptions(opts);
         
         retract($ans);
         update($gui);
@@ -783,7 +768,6 @@ rule "The Future Sound of London - Accelerator"
         opts.add("More!");
         opts.add("I want to feel like I'm on drugs");
         opts.add("Focus on fast, hard hitting drums!");
-        opts.add("Keep the rave vibe, but make it more emotional and melodic");
         $gui.setOptions(opts);
         
         retract($ans);
@@ -793,7 +777,7 @@ end
 rule "Orbital - Brown Album"
     when
     	$gui : GuiState(recommendation != "Orbital - Brown Album")
-        $ans : UserAnswer(selectedOption == "Keep the rave vibe, but make it more emotional and melodic" || selectedOption == "I don't ever want to stop dancing" || selectedOption == "Go backwards for more traditional house music")
+        $ans : UserAnswer(selectedOption == "I don't ever want to stop dancing" || selectedOption == "Go backwards for more traditional house music")
     then
         AlbumRecommendation album = new AlbumRecommendation();
         album.setArtist("Orbital");
@@ -818,7 +802,7 @@ end
 
 rule "Jon Hopkins - Immunity"
     when
-        $ans : UserAnswer(selectedOption == "Jon Hopkins - Immunity")
+        $ans : UserAnswer(selectedOption == "Mix the two.")
     	$gui : GuiState()
     then
         AlbumRecommendation album = new AlbumRecommendation();
