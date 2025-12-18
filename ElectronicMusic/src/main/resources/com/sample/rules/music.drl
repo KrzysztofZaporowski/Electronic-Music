@@ -16,7 +16,6 @@ end
 
 // Klasa reprezentujπca odpowiedü uøytkownika
 declare UserAnswer
-    questionTopic : String      
     selectedOption : String     
 end
 
@@ -33,6 +32,7 @@ end
 rule "Init"
     when
         not GuiState() 
+        not UserAnswer()
     then
         GuiState state = new GuiState();
         state.setMessage("What type of music do you like?");
@@ -50,7 +50,8 @@ end
 
 rule "Radiohead - OK Computer"
     when
-        $ans : UserAnswer(questionTopic == "root", selectedOption == "I like rock music")
+        $ans : UserAnswer(selectedOption == "I like rock music")
+        not AlbumRecommendation()
         $gui : GuiState()
     then
         $gui.setMessage("Found classic choice: Radiohead - OK Computer. Is this what you want?");
@@ -1074,7 +1075,8 @@ end
 
 rule "Process Rap Choice"
     when
-        $ans : UserAnswer(questionTopic == "root", selectedOption == "I like rap music")
+        $ans : UserAnswer(selectedOption == "I like rap music")
+        not AlbumRecommendation()
         $gui : GuiState()
     then
         $gui.setMessage("Starting point: Kanye West - 808s & Heartbreak. How should we proceed?");

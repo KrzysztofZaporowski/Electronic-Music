@@ -183,15 +183,9 @@ public class ElectronicMusic {
             Object answer = answerClass.getDeclaredConstructor().newInstance();
             
             Method setOption = answerClass.getMethod("setSelectedOption", String.class);
-            Method setTopic = answerClass.getMethod("setQuestionTopic", String.class);
             
             setOption.invoke(answer, chosenOption);
             
-            if (questionLabel.getText().contains("What type")) {
-                 setTopic.invoke(answer, "root");
-            } else {
-                 setTopic.invoke(answer, "followup");
-            }
 
             kSession.insert(answer);
             kSession.fireAllRules();
