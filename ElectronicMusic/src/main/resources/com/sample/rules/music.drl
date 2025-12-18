@@ -54,6 +54,11 @@ rule "Radiohead - OK Computer"
         not AlbumRecommendation()
         $gui : GuiState()
     then
+    	AlbumRecommendation album = new AlbumRecommendation();
+        album.setArtist("Radiohead");
+        album.setAlbumName("OK Computer");
+        insert(album);
+        
         $gui.setMessage("Found classic choice: Radiohead - OK Computer. Is this what you want?");
         $gui.setRecommendation("Radiohead - OK Computer"); 
         $gui.setImageFile("IMG_RADIOHEAD_OK");
