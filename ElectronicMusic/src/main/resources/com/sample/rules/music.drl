@@ -3,7 +3,7 @@ package com.sample.rules
 import java.util.ArrayList
 import java.util.List
 
-// --- DEKLARACJE TYPÓW (WYMAGANIE: Klasy przedmiotowe w DRL) ---
+// --- DEKLARACJE TYPÓW ---
 
 // Klasa przechowuj¹ca stan GUI. Java tylko j¹ odczytuje.
 declare GuiState
@@ -14,12 +14,10 @@ declare GuiState
     finished : boolean          
 end
 
-// Klasa reprezentuj¹ca odpowiedŸ u¿ytkownika
 declare UserAnswer
     selectedOption : String     
 end
 
-// Klasa reprezentuj¹ca znaleziony album (Fakt koñcowy)
 declare AlbumRecommendation
     artist : String
     albumName : String
@@ -27,8 +25,6 @@ declare AlbumRecommendation
 end
 
 // --- REGU£Y WNIOSKOWANIA ---
-
-// 1. INICJALIZACJA: Startujemy system
 rule "Init"
     when
         not GuiState() 
